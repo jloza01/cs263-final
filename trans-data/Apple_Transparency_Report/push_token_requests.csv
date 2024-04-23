@@ -1,0 +1,6 @@
+TR Period,TR Start Date,TR End Date,Country/Region,Push Token Requests Received,Push Tokens Specified in Requests,Requests where Data Provided,Percentage of Requests where Data Provided
+2022 H2,7/1/22,12/31/22,Germany,1,1,0,0%
+2022 H2,7/1/22,12/31/22,Netherlands,2,687,1,50%
+2022 H2,7/1/22,12/31/22,Singapore,1,2,0,0%
+2022 H2,7/1/22,12/31/22,United Kingdom,27,28,20,74%
+2022 H2,7/1/22,12/31/22,United States of America,39,76,33,85%
