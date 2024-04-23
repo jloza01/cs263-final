@@ -1,0 +1,1 @@
+# Contains transparency data of Apple
