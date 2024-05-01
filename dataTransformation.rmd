@@ -1,0 +1,151 @@
+---
+title: "Data Transformations"
+author: "Grace Kosieradzki"
+date: "4/26/2024"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,cache = TRUE)
+library(tidyverse)
+library(ggplot2)
+library(readr)
+library(dplyr)
+
+```
+
+
+
+## Apple Transparency
+```{r}
+##READ CSV's
+us_national_security_requests <- read_csv("trans-data/Apple_Transparency_Report/us_national_security_requests.csv") 
+push_token_requests <- read_csv("trans-data/Apple_Transparency_Report/push_token_requests.csv")
+financial_identifier_requests <- read_csv("trans-data/Apple_Transparency_Report/financial_identifier_requests.csv")
+emergency_requests <- read_csv("trans-data/Apple_Transparency_Report/emergency_requests.csv")
+digital_content_provider_requests <- read_csv("trans-data/Apple_Transparency_Report/digital_content_provider_requests.csv")
+device_requests <- read_csv("trans-data/Apple_Transparency_Report/device_requests.csv")
+account_restriction_deletion_requests <- read_csv("trans-data/Apple_Transparency_Report/account_restriction_deletion_requests.csv")
+account_requests <- read_csv("trans-data/Apple_Transparency_Report/account_requests.csv")
+account_preservation_requests <- read_csv("trans-data/Apple_Transparency_Report/account_preservation_requests.csv")
+
+## DATA TRANSFORMATIONS
+# All data after transformations are US only
+
+#Gathers identifying details of accounts that receive certain push notifs
+us_push_token_requests <- push_token_requests |>            # Only one row of data in the US during 2022 H2
+  filter(`Country/Region` == "United States of America") |> # Before this push token requests were in account/device requests
+  rename(push_requests = `Push Token Requests Received`,
+         push_provided = `Requests where Data Provided`,
+         push_percent = `Percentage of Requests where Data Provided`) |> 
+  select(!c(`Country/Region`, `Push Tokens Specified in Requests`)) |> 
+  mutate(push_percent = as.double(str_sub(push_percent, end=2))/100)
+  
+#Seeking financial identifiers (credit/debit card info) usually during suspected fraud cases
+us_financial_identifier_requests <- financial_identifier_requests |>
+  filter(`Country/Region` == "United States of America") |> 
+  rename(financial_requests = `Financial Identifier Requests Received`,
+         financial_provided = `Requests where Data Provided`,
+         financial_percent = `Percentage of Requests where Data Provided`)  |> 
+  select(!c(`Financial Identifiers Specified in Requests`, `Country/Region`)) |> 
+  mutate(financial_percent = ifelse(nchar(financial_percent) == 4,                       #change percent from str to double
+                                 yes = as.double(str_sub(financial_percent, end=3))/100,
+                                 no = as.double(str_sub(financial_percent, end=2))/100)) 
+
+#Seeking customer connection to apple services when there is imminent danger to a person (i.e accessing find my friend data for a missing person case)
+us_emergency_requests <- emergency_requests |> 
+  filter(`Country/Region` == "United States of America") |> 
+  rename(emergency_requests = `Emergency Requests Received`,
+         emergency_provided = `Requests where Data Provided`,
+         emergency_percent = `Percentage of Requests where Data Provided`) |>
+  select(!c(`Requests where No Data Provided`, `Country/Region`, `Requests Rejected/Challenged and No Data Provided`)) |> 
+  mutate(emergency_provided = ifelse(emergency_provided == '-', 0, emergency_provided),
+         emergency_provided = as.double(emergency_provided),
+         emergency_percent = ifelse(emergency_percent == '-', 0, emergency_percent),
+         emergency_percent = ifelse(nchar(emergency_percent) == 4,
+                                 yes = as.double(str_sub(emergency_percent, end=3))/100,
+                                 no = as.double(str_sub(emergency_percent, end=2))/100))
+
+#Seeking info of content providers who are suspected of violating local law 
+us_digital_content_provider_requests <- digital_content_provider_requests |> 
+    filter(`Country/Region` == "United States of America") |> 
+    rename(content_requests =  `Digital Content Provider Requests Received`,
+           content_provided = `Requests where Data Provided`,
+           content_percent = `Percentage of Requests where Data Provided`) |> 
+    select(!c(`Country/Region`, `Requests Objected in Part or Rejected in Full`)) |> 
+  mutate(content_percent = ifelse(nchar(content_percent) == 4,                         
+                                  yes = as.double(str_sub(content_percent, end=3))/100, 
+                                  no = as.double(str_sub(content_percent, end=2))/100))
+
+#Seeking info of people with specific device serial number
+us_device_requests <- device_requests |> 
+    filter(`Country/Region` == "United States of America") |> 
+    rename(device_requests = `Device Requests Received`,
+           device_provided = `Requests where Data Provided`,
+           device_percent = `Percentage of Requests where Data Provided`) |> 
+    select(!c(`Country/Region`, `Devices Specified in Requests`)) |> 
+  mutate(device_percent = ifelse(nchar(device_percent) == 4,
+                                 yes = as.double(str_sub(device_percent, end=3))/100,
+                                 no = as.double(str_sub(device_percent, end=2))/100)) 
+          
+
+#Requests to restrict or delete a user's account
+us_account_restriction_deletion_requests <- account_restriction_deletion_requests |> 
+    filter(`Country/Region` == "United States of America") |> 
+    rename(deletion_restriction_requests = `Account Restriction/ Account Deletion Requests Received`,
+           restriction_provided = `Requests where Account Restricted`,
+           deletion_provided = `Requests where Account Deleted`) |>           
+    mutate(deletion_restriction_percent = 1 - (`Requests Rejected/Challenged where No Action Taken` / deletion_restriction_requests)) |>#calculates % manually
+    mutate(restriction_provided = ifelse(restriction_provided == '-', yes = 0, no = restriction_provided),
+           restriction_provided = as.double(restriction_provided),) |> 
+    select(!c(`Country/Region`, `Accounts Specified in the Requests`, `Requests Rejected/Challenged where No Action Taken`)) 
+    
+ 
+#Requests for account identifiers like Apple ID but also sometimes included content requests such as photos and contacts
+us_account_requests <- account_requests |> 
+    filter(`Country/Region` == "United States of America") |> 
+    rename(account_recieved =`Account Requests Received`,
+           account_noncontent_provided = `Requests where Only Non-Content Data Provided`,
+           account_content_provided = `Requests where Content Provided`,
+           account_percent =`Percentage of Requests where Data Provided`) |> 
+    select(!c(`Country/Region`, `Accounts Specified in Requests`, `Requests Challenged in Part or Rejected in Full`)) |> 
+    mutate(account_percent = ifelse(nchar(account_percent) == 4,
+                                 yes = as.double(str_sub(account_percent, end=3))/100,
+                                 no = as.double(str_sub(account_percent, end=2))/100))
+
+#Requests for apple to preserve a one time copy of customer's account data while legal requests are being obtained
+us_account_preservation_requests <- account_preservation_requests |> 
+    filter(`Country/Region` == "United States of America") |> 
+    rename(`TR Period` = `TR Date`,
+           preservation_recieved = `Account Preservation Requests Received`,
+           preservation_account_count = `Accounts Specified in Requests`,
+           preservation_provided = `Accounts where Data Preserved`) |> 
+    mutate(preservation_percent = preservation_provided / preservation_account_count) |>  
+    select(!c(`Country/Region`))
+
+
+apple_us_transp <- full_join(us_financial_identifier_requests, us_emergency_requests, by=c("TR Period", "TR Start Date", "TR End Date")) |> 
+  full_join(us_digital_content_provider_requests, by=c("TR Period", "TR Start Date", "TR End Date")) |> 
+  full_join(us_device_requests, by=c("TR Period", "TR Start Date", "TR End Date")) |> 
+  full_join(us_account_restriction_deletion_requests, by=c("TR Period", "TR Start Date", "TR End Date")) |> 
+  full_join(us_account_requests, by=c("TR Period", "TR Start Date", "TR End Date")) |>
+  full_join(us_account_preservation_requests, by=c("TR Period", "TR Start Date", "TR End Date")) 
+
+apple_us_transp[is.na(apple_us_transp)] <- 0
+```
+
+
+## Google Transparency
+```{r, eval=FALSE}
+google_usnationalsecurity_nsl_requests <- read_csv("google_csv/google-user-data-requests/google-usnationalsecurity-nsl-requests.csv")
+google_usnationalsecurity_nsl_requests_released <- read_csv("google_csv/google-user-data-requests/google-usnationalsecurity-nsl-requests-released.csv")
+google_usnationalsecurity_fisa_non_content_requests <- read_csv("google_csv/google-user-data-requests/google-usnationalsecurity-fisa-non-content-requests.csv")
+google_usnationalsecurity_fisa_content_requests <- read_csv("google_csv/google-user-data-requests/google-usnationalsecurity-fisa-content-requests.csv")
+google_global_user_data_requests <- read_csv("google_csv/google-user-data-requests/google-global-user-data-requests.csv")
+google_enterprise_data_requests <- read_csv("google_csv/google-user-data-requests/google-enterprise-data-requests.csv")
+```
