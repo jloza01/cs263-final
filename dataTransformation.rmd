@@ -149,13 +149,6 @@ apple_us_transp <- apple_us_transp |>
   select(c(total_requests_apple, total_provided_apple, total_percent_apple, period_end))
 ```
 
-```{r}
-apple_us_transp |>
-       ggplot(aes(x=financial_requests, y=financial_provided)) +
-       geom_point()
-```
-
-
 ## Google Transparency
 ```{r, eval=FALSE}
 google_global_user_data_requests <- read_csv("trans-data/google-user-data-requests/google-user-data-requests/google-global-user-data-requests.csv")
@@ -180,13 +173,161 @@ google_us_transp[is.na(google_us_transp)] <- 0
 
 ```
 
+## Meta Cleaning
+```{r}
+PRPL_Facebook_Government_Report_2023_H1 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2023_H1.csv")
+
+PRPL_Facebook_Government_Report_2022_H1 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2022_H1.csv")
+PRPL_Facebook_Government_Report_2022_H2 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2022_H2.csv")
+
+PRPL_Facebook_Government_Report_2021_H1 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2021_H1.csv")
+PRPL_Facebook_Government_Report_2021_H2 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2021_H2.csv")
+
+PRPL_Facebook_Government_Report_2020_H1 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2020_H1.csv")
+PRPL_Facebook_Government_Report_2020_H2 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2020_H2.csv")
+
+PRPL_Facebook_Government_Report_2019_H1 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2019_H1.csv")
+PRPL_Facebook_Government_Report_2019_H2 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2019_H2.csv")
+
+PRPL_Facebook_Government_Report_2018_H1 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2018_H1.csv")
+PRPL_Facebook_Government_Report_2018_H2 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2018_H2.csv")
+
+PRPL_Facebook_Government_Report_2017_H1 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2017_H1.csv")
+PRPL_Facebook_Government_Report_2017_H2 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2017_H2.csv")
+
+PRPL_Facebook_Government_Report_2016_H1 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2016_H1.csv")
+PRPL_Facebook_Government_Report_2016_H2 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2016_H2.csv")
+
+PRPL_Facebook_Government_Report_2015_H1 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2015_H1.csv")
+PRPL_Facebook_Government_Report_2015_H2 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2015_H2.csv")
+
+PRPL_Facebook_Government_Report_2014_H1 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2014_H1.csv")
+PRPL_Facebook_Government_Report_2014_H2 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2014_H2.csv")
+
+PRPL_Facebook_Government_Report_2013_H1 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2013_H1.csv")
+PRPL_Facebook_Government_Report_2013_H2 <- read_csv("trans-data/meta-government-requests/PRPL-Facebook-Government-Report-2013_H2.csv")
+
+
+meta_2023_H1 <- PRPL_Facebook_Government_Report_2023_H1 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("6/30/2023"))
+
+meta_2022_H1 <- PRPL_Facebook_Government_Report_2022_H1 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total")))|> 
+  mutate(period_end = mdy("6/30/2022"))
+meta_2022_H2 <- PRPL_Facebook_Government_Report_2022_H2 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("12/31/2022"))
+
+meta_2021_H1 <- PRPL_Facebook_Government_Report_2021_H1 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("6/30/2021"))
+meta_2021_H2 <- PRPL_Facebook_Government_Report_2021_H2 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("12/31/2021"))
+
+meta_2020_H1 <- PRPL_Facebook_Government_Report_2020_H1 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total")))|> 
+  mutate(period_end = mdy("6/30/2020"))
+meta_2020_H2 <- PRPL_Facebook_Government_Report_2020_H2 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("12/31/2020"))
+
+meta_2019_H1 <- PRPL_Facebook_Government_Report_2019_H1 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("6/30/2019"))
+meta_2019_H2 <- PRPL_Facebook_Government_Report_2019_H2 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("12/31/2019"))
+
+meta_2018_H1 <- PRPL_Facebook_Government_Report_2018_H1 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("6/30/2018"))
+meta_2018_H2 <- PRPL_Facebook_Government_Report_2018_H2 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("12/31/2018"))
+
+meta_2017_H1 <- PRPL_Facebook_Government_Report_2017_H1 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("6/30/2017"))
+meta_2017_H2 <- PRPL_Facebook_Government_Report_2017_H2 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("12/31/2017"))
+
+meta_2016_H1 <- PRPL_Facebook_Government_Report_2016_H1 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("6/30/2016"))
+meta_2016_H2 <- PRPL_Facebook_Government_Report_2016_H2 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("12/31/2016"))
+
+meta_2015_H1 <- PRPL_Facebook_Government_Report_2015_H1 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("6/30/2015"))
+meta_2015_H2 <- PRPL_Facebook_Government_Report_2015_H2 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("12/31/2015"))
+
+meta_2014_H1 <- PRPL_Facebook_Government_Report_2014_H1 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("6/30/2014"))
+meta_2014_H2 <- PRPL_Facebook_Government_Report_2014_H2 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("12/31/2014"))
+
+meta_2013_H1 <- PRPL_Facebook_Government_Report_2013_H1 |> 
+  filter(Country == "United States") |> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("6/30/2013"))
+meta_2013_H2 <- PRPL_Facebook_Government_Report_2013_H2 |> 
+  filter(Country == "United States")|> 
+  select(c(starts_with("Total"))) |> 
+  mutate(period_end = mdy("12/31/2013"))
+
+meta_us_transp <- list(meta_2013_H1,meta_2013_H2, meta_2014_H1, meta_2014_H2, meta_2015_H1, meta_2015_H2, meta_2016_H1, meta_2016_H2, meta_2017_H1, meta_2017_H2, meta_2018_H1, meta_2018_H2, meta_2019_H1, meta_2019_H2, meta_2020_H1, meta_2020_H2, meta_2021_H1, meta_2021_H2, meta_2022_H1, meta_2022_H2, meta_2023_H1)
+
+
+meta_us_transp <-do.call("rbind", meta_us_transp) |> 
+  as_tibble() |> 
+  rename(total_percent_meta = "Total Requests Percentage",
+         total_requests_meta = "Total Requests",
+         total_accounts_meta =  "Total Requests Accounts") |> 
+  mutate(total_percent_meta = ifelse(nchar(total_percent_meta) == 4,
+                                 yes = as.double(str_sub(total_percent_meta, end=3))/100,
+                                 no = as.double(str_sub(total_percent_meta, end=2))/100)) 
+
+```
+
+
+## Combining Datasets
 ```{r}
 full_us_transp <-  merge(google_us_transp, apple_us_transp)
+full_us_transp <- merge(full_us_transp, meta_us_transp)
 
 full_us_transp |> 
   ggplot(aes(x=period_end)) +
   geom_line(aes(y=total_percent_google,color="Google")) +
   geom_line(aes(y=total_percent_apple, color="Apple")) +
+  geom_line(aes(y=total_percent_meta, color="Meta")) +
   labs(title = "Government Compliance Based on Company",
        x = "Year",
        y = "Percent Compliance",
