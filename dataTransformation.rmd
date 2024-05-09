@@ -34,6 +34,7 @@ account_restriction_deletion_requests <- read_csv("trans-data/Apple_Transparency
 account_requests <- read_csv("trans-data/Apple_Transparency_Report/account_requests.csv")
 account_preservation_requests <- read_csv("trans-data/Apple_Transparency_Report/account_preservation_requests.csv")
 
+
 ## DATA TRANSFORMATIONS
 # All data after transformations are US only
 
@@ -109,7 +110,7 @@ us_account_restriction_deletion_requests <- account_restriction_deletion_request
 #Requests for account identifiers like Apple ID but also sometimes included content requests such as photos and contacts
 us_account_requests <- account_requests |> 
     filter(`Country/Region` == "United States of America") |> 
-    rename(account_recieved =`Account Requests Received`,
+    rename(account_requests =`Account Requests Received`,
            account_noncontent_provided = `Requests where Only Non-Content Data Provided`,
            account_content_provided = `Requests where Content Provided`,
            account_percent =`Percentage of Requests where Data Provided`) |> 
@@ -119,10 +120,11 @@ us_account_requests <- account_requests |>
                                  no = as.double(str_sub(account_percent, end=2))/100))
 
 #Requests for apple to preserve a one time copy of customer's account data while legal requests are being obtained
+#Not being used in the final analysis
 us_account_preservation_requests <- account_preservation_requests |> 
     filter(`Country/Region` == "United States of America") |> 
     rename(`TR Period` = `TR Date`,
-           preservation_recieved = `Account Preservation Requests Received`,
+           preservation_requests = `Account Preservation Requests Received`,
            preservation_account_count = `Accounts Specified in Requests`,
            preservation_provided = `Accounts where Data Preserved`) |> 
     mutate(preservation_percent = preservation_provided / preservation_account_count) |>  
@@ -133,19 +135,60 @@ apple_us_transp <- full_join(us_financial_identifier_requests, us_emergency_requ
   full_join(us_digital_content_provider_requests, by=c("TR Period", "TR Start Date", "TR End Date")) |> 
   full_join(us_device_requests, by=c("TR Period", "TR Start Date", "TR End Date")) |> 
   full_join(us_account_restriction_deletion_requests, by=c("TR Period", "TR Start Date", "TR End Date")) |> 
-  full_join(us_account_requests, by=c("TR Period", "TR Start Date", "TR End Date")) |>
-  full_join(us_account_preservation_requests, by=c("TR Period", "TR Start Date", "TR End Date")) 
+  full_join(us_account_requests, by=c("TR Period", "TR Start Date", "TR End Date"))
 
 apple_us_transp[is.na(apple_us_transp)] <- 0
+
+apple_us_transp <- apple_us_transp |> 
+  group_by(`TR Period`) |> 
+  mutate(total_requests_apple = sum(across(ends_with("requests"))),
+         total_provided_apple = sum(across(ends_with("provided"))),
+         total_percent_apple = total_provided_apple / total_requests_apple,
+         period_end = as.Date(`TR End Date`, "%m/%d/%y")) |> 
+  ungroup() |> 
+  select(c(total_requests_apple, total_provided_apple, total_percent_apple, period_end))
+```
+
+```{r}
+apple_us_transp |>
+       ggplot(aes(x=financial_requests, y=financial_provided)) +
+       geom_point()
 ```
 
 
 ## Google Transparency
 ```{r, eval=FALSE}
-google_usnationalsecurity_nsl_requests <- read_csv("google_csv/google-user-data-requests/google-usnationalsecurity-nsl-requests.csv")
-google_usnationalsecurity_nsl_requests_released <- read_csv("google_csv/google-user-data-requests/google-usnationalsecurity-nsl-requests-released.csv")
-google_usnationalsecurity_fisa_non_content_requests <- read_csv("google_csv/google-user-data-requests/google-usnationalsecurity-fisa-non-content-requests.csv")
-google_usnationalsecurity_fisa_content_requests <- read_csv("google_csv/google-user-data-requests/google-usnationalsecurity-fisa-content-requests.csv")
-google_global_user_data_requests <- read_csv("google_csv/google-user-data-requests/google-global-user-data-requests.csv")
-google_enterprise_data_requests <- read_csv("google_csv/google-user-data-requests/google-enterprise-data-requests.csv")
+google_global_user_data_requests <- read_csv("trans-data/google-user-data-requests/google-user-data-requests/google-global-user-data-requests.csv")
+
+
+google_us_transp <- google_global_user_data_requests |> 
+  filter(`Country/Region`== "United States",
+         `Legal Process` != "Preservation Requests") |> 
+  mutate(`Percentage disclosed` = `Percentage disclosed` / 100,
+    user_provided = `User Data Requests` * `Percentage disclosed`) |>
+  group_by(`Period Ending`) |> 
+  mutate(total_requests_google = sum(`User Data Requests`),
+         user_provided = sum(`user_provided`),
+         total_percent_google = user_provided / total_requests_google,
+         total_accounts_google = sum(Accounts))  |> 
+  summarise(across(starts_with("total"), max)) |> 
+  ungroup() |> 
+  mutate(period_end = as.Date(`Period Ending`)) |> 
+  select(!`Period Ending`)
+
+google_us_transp[is.na(google_us_transp)] <- 0
+
+```
+
+```{r}
+full_us_transp <-  merge(google_us_transp, apple_us_transp)
+
+full_us_transp |> 
+  ggplot(aes(x=period_end)) +
+  geom_line(aes(y=total_percent_google,color="Google")) +
+  geom_line(aes(y=total_percent_apple, color="Apple")) +
+  labs(title = "Government Compliance Based on Company",
+       x = "Year",
+       y = "Percent Compliance",
+       colour = "Company")
 ```
