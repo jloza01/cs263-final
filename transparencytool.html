@@ -6,7 +6,7 @@
     </head>
 
     <body>
-        <h1><img src="/images/earthoutline.png" alt="Outline of Earth"> DTN</h1>
+        <h1><img src="images/earthoutline.png" alt="Outline of Earth"> DTN</h1>
         <h2>
             <a class="tab" href="/index.html">Home</a>
             <a class="tab" href="/news.html">News</a>
@@ -16,5 +16,24 @@
         </h2>
        
         <h3>This is the Transparency Tool page</h3>
-    </body>
+        
+        <h3> Choose which companies you would like to visualize.</h3>
+
+        <label><input type="checkbox" name="companySelector" value="Apple" onclick="displayImage()"> Apple</label>
+        <label><input type="checkbox" name="companySelector" value="Google" onclick="displayImage()"> Google</label>
+        <label><input type="checkbox" name="companySelector" value="Meta" onclick="displayImage()"> Meta</label>
+
+        <p></p>
+        <p></p>
+        
+        <img id="A" src="images/percent_A.png"alt="plot for apple" style="display: none;">
+        <img id="G" src="images/percent_G.png" alt="plot for google" style="display: none;">
+        <img id="M" src="images/percent_M.png" alt="plot for meta" style="display: none;">
+        <img id="GM" src="images/percent_GM.png" alt="plot for google and meta" style="display: none;">
+        <img id="GA" src="images/percent_GA.png" alt="plot for google and apple" style="display: none;">
+        <img id="AM" src="images/percent_AM.png" alt="plot for apple and meta" style="display: none;">
+        <img id="ALL" src="images/percent_all.png" alt="plot for google, apple, and meta" style="display: none;">
+        
+        <script src="transpImages.js"></script>
+        </body>
 </html>
