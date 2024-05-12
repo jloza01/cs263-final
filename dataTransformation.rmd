@@ -323,7 +323,7 @@ meta_us_transp <-do.call("rbind", meta_us_transp) |>
 full_us_transp <-  merge(google_us_transp, apple_us_transp)
 full_us_transp <- merge(full_us_transp, meta_us_transp)
 
-full_us_transp |> 
+percent_all <- full_us_transp |> 
   ggplot(aes(x=period_end)) +
   geom_line(aes(y=total_percent_google,color="Google")) +
   geom_line(aes(y=total_percent_apple, color="Apple")) +
@@ -332,4 +332,126 @@ full_us_transp |>
        x = "Year",
        y = "Percent Compliance",
        colour = "Company")
+
+percent_GA <- full_us_transp |>
+  ggplot(aes(x=period_end)) +
+  geom_line(aes(y=total_percent_google,color="Google")) +
+  geom_line(aes(y=total_percent_apple, color="Apple")) +
+  labs(title = "Government Compliance Based on Company",
+       x = "Year",
+       y = "Percent Compliance",
+       colour = "Company")
+
+percent_GM <- full_us_transp |>
+  ggplot(aes(x=period_end)) +
+  geom_line(aes(y=total_percent_google,color="Google")) +
+  geom_line(aes(y=total_percent_meta, color="Meta")) +
+  labs(title = "Government Compliance Based on Company",
+       x = "Year",
+       y = "Percent Compliance",
+       colour = "Company")
+
+percent_AM <- full_us_transp |>
+  ggplot(aes(x=period_end)) +
+  geom_line(aes(y=total_percent_apple, color="Apple")) +
+  geom_line(aes(y=total_percent_meta, color="Meta")) +
+  labs(title = "Government Compliance Based on Company",
+       x = "Year",
+       y = "Percent Compliance",
+       colour = "Company")
+
+percent_G <- full_us_transp |>
+  ggplot(aes(x=period_end)) +
+  geom_line(aes(y=total_percent_google,color="Google")) +
+  labs(title = "Government Compliance Based on Company",
+       x = "Year",
+       y = "Percent Compliance",
+       colour = "Company")
+
+percent_A <- full_us_transp |>
+  ggplot(aes(x=period_end)) +
+  geom_line(aes(y=total_percent_apple, color="Apple")) +
+  labs(title = "Government Compliance Based on Company",
+       x = "Year",
+       y = "Percent Compliance",
+       colour = "Company")
+
+percent_M <- full_us_transp |>
+  ggplot(aes(x=period_end)) +
+  geom_line(aes(y=total_percent_meta, color="Meta")) +
+  labs(title = "Government Compliance Based on Company",
+       x = "Year",
+       y = "Percent Compliance",
+       colour = "Company")
+
+
+ggsave(filename = "percent_all.png",
+       path = "images",
+       plot = percent_all,
+       width = 5,
+       height = 5,
+       units = "in",
+       scale = 1,
+       device = "png",
+       dpi = 650)
+
+ggsave(filename = "percent_GA.png",
+       path = "images",
+       plot = percent_GA,
+       width = 5,
+       height = 5,
+       units = "in",
+       scale = 1,
+       device = "png",
+       dpi = 650)
+
+ggsave(filename = "percent_GM.png",
+       path = "images",
+       plot = percent_GM,
+       width = 5,
+       height = 5,
+       units = "in",
+       scale = 1,
+       device = "png",
+       dpi = 650)
+
+ggsave(filename = "percent_AM.png",
+       path = "images",
+       plot = percent_AM,
+       width = 5,
+       height = 5,
+       units = "in",
+       scale = 1,
+       device = "png",
+       dpi = 650)
+
+ggsave(filename = "percent_G.png",
+       path = "images",
+       plot = percent_G,
+       width = 5,
+       height = 5,
+       units = "in",
+       scale = 1,
+       device = "png",
+       dpi = 650)
+
+ggsave(filename = "percent_A.png",
+       path = "images",
+       plot = percent_A,
+       width = 5,
+       height = 5,
+       units = "in",
+       scale = 1,
+       device = "png",
+       dpi = 650)
+
+ggsave(filename = "percent_M.png",
+       path = "images",
+       plot = percent_M,
+       width = 5,
+       height = 5,
+       units = "in",
+       scale = 1,
+       device = "png",
+       dpi = 650)
 ```
