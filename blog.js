@@ -1,5 +1,5 @@
 var users = {
-    user1: "Password"
+    user1: "Pass"
 };
 class user{
     constructor(username, password){
@@ -15,10 +15,14 @@ class user{
 };
 
 function getInfo(){
-    var un = document.getElementById("username");
-    var pw = document.getElementById("password");
+    var un = document.getElementById("username").value;
+    var pw = document.getElementById("password").value;
 
-    if (users.un == users.pw){
-        document.getElementById('Test').innerHTML = Date()
+    if (users[un] == pw){
+        document.getElementById('Test1').innerHTML = "Logged in as: " + un
+        document.getElementById('signin').remove()
+    }
+    else{
+        document.getElementById('Test1').innerHTML = "Incorrect Password or Username"
     }
 };
