@@ -1,0 +1,51 @@
+* {
+    margin: 0;
+    padding: 0;
+    background-color: aliceblue;
+}
+
+img {
+    height: 100px;
+    width: 100px;
+    display: inline-block;
+    vertical-align: middle;
+    background-color: blue;
+}
+
+h1 {
+    display: inline-block;
+    height: 100px;
+    width: 100%;
+    line-height: 100px;
+    background-color: blue;
+    font-family: Arial;
+    font-weight: bolder;
+    font-size: 90px;
+    color: white;
+}
+h2 {
+    padding-top: 5px;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    line-height: 60px;
+    background-color: blue;
+    font-family: Arial;
+    font-weight: normal;
+    font-size: px;
+    color: white;
+}
+a.tab {
+    background-color: blue;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-decoration: none;
+}
+
+a.tab:visited{
+    color:white;
+}
+a.tab:hover{
+    background-color: rgb(3, 3, 211);
+
+}
