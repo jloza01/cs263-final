@@ -35,6 +35,12 @@ h2 {
     font-size: px;
     color: white;
 }
+h3{
+    font-size: xx-large;
+}
+h4{
+    font-size: large;
+}
 a.tab {
     background-color: blue;
     padding-left: 10px;
@@ -48,5 +54,8 @@ a.tab:visited{
 a.tab:hover{
     background-color: rgb(3, 3, 211);
 
+}
+div {
+    padding: 5px;
 }
 
