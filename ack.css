@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     background-color: aliceblue;
+    font-family: Arial;
 }
 
 img {
@@ -35,6 +36,14 @@ h2 {
     font-size: px;
     color: white;
 }
+h3{
+    font-size: xx-large;
+    padding-left: 10px;
+}
+h4{
+    font-size: large;
+    padding-left: 10px;
+}
 a.tab {
     background-color: blue;
     padding-left: 10px;
@@ -48,4 +57,10 @@ a.tab:visited{
 a.tab:hover{
     background-color: rgb(3, 3, 211);
 
+}
+div {
+    padding: 5px;
+}
+p {
+    font-size: larger;
 }
